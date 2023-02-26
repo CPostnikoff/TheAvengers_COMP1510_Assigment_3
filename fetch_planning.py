@@ -29,14 +29,14 @@ return_distance = math.sqrt((y_sum ** 2) + (x_sum ** 2))
 distance_triange_angle = math.tan(y_sum / x_sum)
 desired_yaw = 360 - (90 + distange_trangle_angle)
 
-while hub.motion_sensor.get_yaw_angle() != desired_yaw
+while hub.motion_sensor.get_yaw_angle() != desired_yaw:
     # move the robot
     #
     #
     #
     #
 
-if hub.motion_sensor.get_yaw_angle() == desired_yaw
+if hub.motion_sensor.get_yaw_angle() == desired_yaw:
     # activate motors, with distance = return_distance, units, 0, 100 speed) 
     #
     #
