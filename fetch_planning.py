@@ -26,8 +26,8 @@ return_distance = math.sqrt((y_sum ** 2) + (x_sum ** 2))
 
 # now to handle the direction of return
 # we will use final distance travelled to determine the angle of return
-distance_triange_angle = math.tan(y_sum / x_sum)
-desired_yaw = 360 - (90 + distange_trangle_angle)
+distance_triangle_angle = math.tan(y_sum / x_sum)
+desired_yaw = 360 - (90 + distance_triangle_angle)
 
 while hub.motion_sensor.get_yaw_angle() != desired_yaw:
     # move the robot
