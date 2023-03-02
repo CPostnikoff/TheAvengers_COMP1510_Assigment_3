@@ -1,0 +1,113 @@
+from mindstorms import MSHub, Motor, MotorPair, ColorSensor, DistanceSensor, App
+from mindstorms.control import wait_for_seconds, wait_until, Timer
+from mindstorms.operator import greater_than, greater_than_or_equal_to, less_than, less_than_or_equal_to, equal_to, not_equal_to
+import math
+
+## Create your objects here.
+
+# initialize hub so we can use the hub.motion_sensor
+hub = MSHub()
+distance_sensor = DistanceSensor('F')
+motor_pair_front = MotorPair('A', 'B')
+motor_pair_back = MotorPair('C', 'D')
+motor_pair_left = MotorPair('B', 'C')
+motor_pair_right = MotorPair('A', 'D')
+motor_front_left = Motor("A")
+motor_front_right = Motor("B")
+motor_back_left = Motor("C")
+motor_back_right = Motor("D")
+distance_sensor.light_up_all(100)
+## Write your program here.
+
+print(distance_sensor.get_distance_cm())
+
+# This makes Gelo walk in the specified direction for the specified number of seconds.
+def move_straight_for_seconds(seconds):
+    motor_front_left.start(speed=100)
+    motor_front_right.start(speed=100)
+    motor_back_left.start(speed=100)
+    motor_back_right.start(speed=100)
+    wait_for_seconds(seconds)
+    motor_front_left.stop()
+    motor_front_right.stop()
+    motor_back_left.stop()
+    motor_back_right.stop()
+
+
+def turn_left_for_seconds(seconds):
+    motor_front_left.start(speed=100)
+    motor_front_right.start(speed=100)
+    motor_back_left.start(speed=100)
+    motor_back_right.start(speed=100)
+    wait_for_seconds(seconds)
+    motor_front_left.stop()
+    motor_front_right.stop()
+    motor_back_left.stop()
+    motor_back_right.stop()
+
+
+def turn_right_for_seconds(seconds):
+    motor_front_left.start(speed=100)
+    motor_front_right.start(speed=100)
+    motor_back_left.start(speed=100)
+    motor_back_right.start(speed=100)
+    wait_for_seconds(seconds)
+    motor_front_left.stop()
+    motor_front_right.stop()
+    motor_back_left.stop()
+    motor_back_right.stop()
+
+turn_left_for_seconds(5)
+
+def check():
+    while distance_sensor.get_distance_cm() == None or distance_sensor.get_distance_cm() > 50:
+        motor_pair_front.move(2, 'cm', 100, 25)
+        motor_pair_back.move(-2, 'cm', 100, 25)
+        wait_for_seconds(0.25)
+        distance_to_ball = distance_sensor.get_distance_cm()
+        continue
+    return distance_to_ball
+
+def turn_for_seconds(direction, seconds):
+    default_speed = motor_pair_back_legs.get_default_speed()
+    walk_speed = {
+        'forward': default_speed,
+        'backward': -default_speed,
+    }
+    speed = walk_speed.get(direction, 50)
+    motor_pair_back_legs.start(speed=speed)
+    motor_pair_front_legs.start(speed=speed)
+    wait_for_seconds(seconds)
+    motor_pair_back_legs.stop()
+    motor_pair_front_legs.stop()
+
+def check():
+    while distance_sensor.get_distance_cm() == None or distance_sensor.get_distance_cm() > 50:
+        motor_pair_front.move(2, 'cm', 100, 25)
+        motor_pair_back.move(-2, 'cm', 100, 25)
+        wait_for_seconds(0.25)
+        distance_to_ball = distance_sensor.get_distance_cm()
+        continue
+    return distance_to_ball
+
+
+
+initial_distance = check()
+
+hub.speaker.play_sound("Celebrate")
+
+motor_pair.move(initial_distance*1.25, 'cm', 0, 100)
+
+def next_push():
+    wait_for_seconds(0.25)
+    if distance_sensor.get_distance_cm() < 10:
+        motor_pair.move(50, 'cm', 0, 100)
+        next_push()
+    else:
+        new_distance = check()
+        motor_pair.move(new_distance*1.25, 'cm', 0, 100)
+        next_push()
+
+next_push()
+        
+
