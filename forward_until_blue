@@ -1,0 +1,46 @@
+from mindstorms import MSHub, Motor, MotorPair, ColorSensor, DistanceSensor, App
+from mindstorms.control import wait_for_seconds, wait_until, Timer
+from mindstorms.operator import greater_than, greater_than_or_equal_to, less_than, less_than_or_equal_to, equal_to, not_equal_to
+import math
+
+## Create your objects here.
+
+# initialize hub so we can use the hub.motion_sensor
+hub = MSHub()
+paper_scanner = ColorSensor('E')
+distance_sensor = DistanceSensor('F')
+motor_front_left = Motor("A")
+motor_front_right = Motor("B")
+motor_back_left = Motor("C")
+motor_back_right = Motor("D")
+distance_sensor.light_up_all(100)
+## Write your program here.
+
+print(distance_sensor.get_distance_cm())
+
+# speed = "43cm/sec"
+
+def convert_distance_to_time(distance):
+    desired_run_time = float(distance / 43)
+    return desired_run_time
+
+def move_straight():
+    while True:
+        current_color = paper_scanner.get_color()
+        while current_color != "blue":
+            motor_front_left.start(speed=-40)
+            motor_front_right.start(speed=40)
+            motor_back_left.start(speed=-40)
+            motor_back_right.start(speed=40)
+            current_color = paper_scanner.get_color()
+            while current_color != "blue":
+                current_color = paper_scanner.get_color()
+        while current_color == "blue":
+            motor_front_left.stop()
+            motor_front_right.stop()
+            motor_back_left.stop()
+            motor_back_right.stop()
+            current_color = paper_scanner.get_color()
+            while current_color != "blue":
+                current_color = paper_scanner.get_color()
+move_straight()
