@@ -1,0 +1,134 @@
+from mindstorms import MSHub, Motor, MotorPair, ColorSensor, DistanceSensor, App
+from mindstorms.control import wait_for_seconds, wait_until, Timer
+from mindstorms.operator import greater_than, greater_than_or_equal_to, less_than, less_than_or_equal_to, equal_to, not_equal_to
+import math
+
+## Create your objects here.
+
+# initialize hub so we can use the hub.motion_sensor
+hub = MSHub()
+paper_scanner = ColorSensor('E')
+distance_sensor = DistanceSensor('F')
+motor_front_left = Motor("A")
+motor_front_right = Motor("B")
+motor_back_left = Motor("C")
+motor_back_right = Motor("D")
+distance_sensor.light_up_all(100)
+## Write your program here.
+
+print(distance_sensor.get_distance_cm())
+
+# speed = "43cm/sec"
+
+def convert_distance_to_time(distance):
+    desired_run_time = float(distance / 43)
+    return desired_run_time
+
+# This makes Gelo walk in the specified direction for the specified number of seconds.
+def move_straight_for_seconds(seconds):
+    motor_front_left.start(speed=-100)
+    motor_front_right.start(speed=100)
+    motor_back_left.start(speed=-100)
+    motor_back_right.start(speed=100)
+    wait_for_seconds(seconds)
+    motor_front_left.stop()
+    motor_front_right.stop()
+    motor_back_left.stop()
+    motor_back_right.stop()
+
+def move_back_for_seconds(seconds):
+    motor_front_left.start(speed=100)
+    motor_front_right.start(speed=-100)
+    motor_back_left.start(speed=100)
+    motor_back_right.start(speed=-100)
+    wait_for_seconds(seconds)
+    motor_front_left.stop()
+    motor_front_right.stop()
+    motor_back_left.stop()
+    motor_back_right.stop()   
+
+
+def turn_left_for_seconds(seconds):
+    motor_front_left.start(speed=100)
+    motor_front_right.start(speed=100)
+    motor_back_left.start(speed=100)
+    motor_back_right.start(speed=100)
+    wait_for_seconds(seconds)
+    motor_front_left.stop()
+    motor_front_right.stop()
+    motor_back_left.stop()
+    motor_back_right.stop()
+
+
+def turn_right_for_seconds(seconds):
+    motor_front_left.start(speed=-100)
+    motor_front_right.start(speed=-100)
+    motor_back_left.start(speed=-100)
+    motor_back_right.start(speed=-100)
+    wait_for_seconds(seconds)
+    motor_front_left.stop()
+    motor_front_right.stop()
+    motor_back_left.stop()
+    motor_back_right.stop()
+
+# turn_left_for_seconds(2)
+# turn_right_for_seconds(2)
+# move_back_for_seconds(1)
+
+
+def detect_boundary():
+    wait_for_seconds(0.25)
+    if paper_scanner.get_color() == "blue":
+        move_back_for_seconds(0.5)
+        turn_right_for_seconds(0.5)
+        return True
+    return False    
+    
+
+
+
+def check():
+    hub.motion_sensor.reset_yaw_angle()
+    angle = hub.motion_sensor.get_yaw_angle()
+    previous_angle = 0
+    detect_boundary()
+    while distance_sensor.get_distance_cm() == None or distance_sensor.get_distance_cm() > 50:
+        turn_right_for_seconds(0.25)
+        wait_for_seconds(1.0)
+        if angle > 360:
+            wait_for_seconds(1)
+            move_straight_for_seconds(0.75)
+            detect_boundary()
+            check()
+        if  0 <= hub.motion_sensor.get_yaw_angle() <= 180:
+            angle = hub.motion_sensor.get_yaw_angle()
+            print(angle)
+            continue
+        if  hub.motion_sensor.get_yaw_angle() < 0:
+            print(hub.motion_sensor.get_yaw_angle())
+            previous_angle = -((-1 * hub.motion_sensor.get_yaw_angle()) - 180) - previous_angle
+            angle += previous_angle
+            print(angle)
+            continue
+        continue
+    distance = distance_sensor.get_distance_cm()
+    return distance
+
+
+initial_distance = check()
+
+hub.speaker.play_sound("Celebrate")
+
+def next_push():
+    wait_for_seconds(0.25)
+    new_distance = distance_sensor.get_distance_cm()
+    if new_distance == None or new_distance < 10:
+        move_straight_for_seconds(5)
+        next_push()
+    else:
+        new_distance_time = convert_distance_to_time(check())
+        move_straight_for_seconds(new_distance_time*1.25)
+        next_push()
+
+next_push()
+        
