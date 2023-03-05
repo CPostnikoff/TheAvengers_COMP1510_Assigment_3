@@ -1,0 +1,179 @@
+from mindstorms import MSHub, Motor, MotorPair, ColorSensor, DistanceSensor, App
+from mindstorms.control import wait_for_seconds, wait_until, Timer
+from mindstorms.operator import greater_than, greater_than_or_equal_to, less_than, less_than_or_equal_to, equal_to, not_equal_to
+import math
+# Movement definitions
+hub = MSHub()
+distance_sensor = DistanceSensor('F')
+motor_left = Motor("C")
+motor_right = Motor("D")
+motor_arm = Motor("A")
+paper_scanner = ColorSensor("E")
+
+
+def convert_distance_to_time(distance):
+    desired_run_time = float(distance / 60)
+    return desired_run_time
+
+
+def move_straight_while_green():
+    current_color = color_sensor.get_color()
+    while current_color != "black":
+        motor_front_left.start(speed=-100)
+        motor_front_right.start(speed=100)
+        motor_back_left.start(speed=-100)
+        motor_back_right.start(speed=100)
+        current_color = color_sensor.get_color()
+        while current_color != "black":
+            current_color = color_sensor.get_color()
+    while current_color == "black":
+        motor_front_left.stop()
+        motor_front_right.stop()
+        motor_back_left.stop()
+        motor_back_right.stop()
+        break
+
+def turn_left_while_black():
+    current_color = color_sensor.get_color()
+    while current_color != "green":
+        motor_front_left.start(speed=100)
+        motor_front_right.start(speed=100)
+        motor_back_left.start(speed=100)
+        motor_back_right.start(speed=100)
+        current_color = color_sensor.get_color()
+        while current_color != "green":
+            current_color = color_sensor.get_color()
+    while current_color == "green":
+        wait_for_seconds(0.16)
+        motor_front_left.stop()
+        motor_front_right.stop()
+        motor_back_left.stop()
+        motor_back_right.stop()
+        break
+
+
+
+def turn_right_before_yaw():
+    while True:
+        motor_front_left.start(speed=-100)
+        motor_front_right.start(speed=-100)
+        motor_back_left.start(speed=-100)
+        motor_back_right.start(speed=-100)
+        current_yaw = hub.motion_sensor.get_yaw_angle()
+        current_color = color_sensor.get_color()
+        if current_yaw > 25 or current_color == 'green':
+            motor_front_left.stop()
+            motor_front_right.stop()
+            motor_back_left.stop()
+            motor_back_right.stop()
+            return
+
+
+
+def move_straight_and_left():
+    current_color = color_sensor.get_color()
+    while current_color != "black":
+        motor_front_left.start(speed=-30)
+        motor_front_right.start(speed=50)
+        motor_back_left.start(speed=-30)
+        motor_back_right.start(speed=50)
+        current_color = color_sensor.get_color()
+        while current_color != "black":
+            current_color = color_sensor.get_color()
+    while current_color == "black":
+        motor_front_left.stop()
+        motor_front_right.stop()
+        motor_back_left.stop()
+        motor_back_right.stop()
+        break
+
+
+def move_straight_and_right():
+    current_color = color_sensor.get_color()
+    while current_color != "black":
+        motor_front_left.start(speed=-50)
+        motor_front_right.start(speed=30)
+        motor_back_left.start(speed=-50)
+        motor_back_right.start(speed=30)
+        current_color = color_sensor.get_color()
+        while current_color != "black":
+            current_color = color_sensor.get_color()
+    while current_color == "black":
+        motor_front_left.stop()
+        motor_front_right.stop()
+        motor_back_left.stop()
+        motor_back_right.stop()
+        break
+
+def move_straight_for_seconds(seconds):
+    motor_left.start(speed=-100)
+    motor_right.start(speed=100)
+    # motor_back_left.start(speed=-100)
+    # motor_back_right.start(speed=100)
+    wait_for_seconds(seconds)
+    motor_left.stop()
+    motor_right.stop()
+    # motor_back_left.stop()
+    # motor_back_right.stop()
+
+def move_back_for_seconds(seconds):
+    motor_left.start(speed=100)
+    motor_right.start(speed=-100)
+    # motor_back_left.start(speed=-100)
+    # motor_back_right.start(speed=100)
+    wait_for_seconds(seconds)
+    motor_left.stop()
+    motor_right.stop()
+    # motor_back_left.stop()
+    # motor_back_right.stop()
+
+
+def turn_left_for_seconds(seconds):
+    motor_left.start(speed=-20)
+    motor_right.start(speed=-20)
+    # motor_back_left.start(speed=-100)
+    # motor_back_right.start(speed=100)
+    wait_for_seconds(seconds)
+    motor_left.stop()
+    motor_right.stop()
+    # motor_back_left.stop()
+    # motor_back_right.stop()
+
+
+def turn_right_for_seconds(seconds):
+    motor_front_left.start(speed=-80)
+    motor_front_right.start(speed=-80)
+    motor_back_left.start(speed=-80)
+    motor_back_right.start(speed=-80)
+    wait_for_seconds(seconds)
+    motor_front_left.stop()
+    motor_front_right.stop()
+    motor_back_left.stop()
+    motor_back_right.stop()
+
+# Write your program here.
+hub.speaker.beep()
+
+print(distance_sensor.get_distance_cm())
+hub.motion_sensor.reset_yaw_angle()
+yaw = 0
+while distance_sensor.get_distance_cm() == None or distance_sensor.get_distance_cm() > 50:
+    turn_left_for_seconds(0.3)
+    wait_for_seconds(0.2)
+    yaw += hub.motion_sensor.get_yaw_angle()
+
+
+time_to_ball = convert_distance_to_time(distance_sensor.get_distance_cm())
+
+if time_to_ball > 1:
+    time_to_ball =- 0.5
+
+
+
+hub.speaker.play_sound("Celebrate")
+
+move_straight_for_seconds(time_to_ball)
+
+motor_arm.run_for_degrees(-120,100)
+
+move_back_for_seconds(time_to_ball)
