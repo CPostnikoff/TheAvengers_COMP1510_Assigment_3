@@ -1,0 +1,207 @@
+from mindstorms import MSHub, Motor, MotorPair, ColorSensor, DistanceSensor, App
+from mindstorms.control import wait_for_seconds, wait_until, Timer
+from mindstorms.operator import greater_than, greater_than_or_equal_to, less_than, less_than_or_equal_to, equal_to, not_equal_to
+import math
+# Movement definitions
+hub = MSHub()
+# distance_sensor = DistanceSensor('F')
+motor_pair_front = MotorPair('A', 'B')
+motor_pair_back = MotorPair('C', 'D')
+motor_pair_left = MotorPair('B', 'C')
+motor_pair_right = MotorPair('A', 'D')
+motor_front_left = Motor("A")
+motor_front_right = Motor("B")
+motor_back_left = Motor("C")
+motor_back_right = Motor("D")
+color_sensor = ColorSensor("E")
+# distance_sensor.light_up_all(100)
+## Write your program here.
+
+# print(distance_sensor.get_distance_cm())
+
+def convert_distance_to_time(distance):
+    desired_run_time = float(distance / 43)
+    return desired_run_time
+
+# This makes Gelo walk in the specified direction for the specified number of seconds.
+def move_straight_while_green():
+    current_color = color_sensor.get_color()
+    while current_color != "black":
+        motor_front_left.start(speed=-100)
+        motor_front_right.start(speed=100)
+        motor_back_left.start(speed=-100)
+        motor_back_right.start(speed=100)
+        current_color = color_sensor.get_color()
+        while current_color != "black":
+            current_color = color_sensor.get_color()
+    while current_color == "black":
+        motor_front_left.stop()
+        motor_front_right.stop()
+        motor_back_left.stop()
+        motor_back_right.stop()
+        break
+
+def turn_left_while_black():
+    current_color = color_sensor.get_color()
+    while current_color != "green":
+        motor_front_left.start(speed=100)
+        motor_front_right.start(speed=100)
+        motor_back_left.start(speed=100)
+        motor_back_right.start(speed=100)
+        current_color = color_sensor.get_color()
+        while current_color != "green":
+            current_color = color_sensor.get_color()
+    while current_color == "green":
+        wait_for_seconds(0.16)
+        motor_front_left.stop()
+        motor_front_right.stop()
+        motor_back_left.stop()
+        motor_back_right.stop()
+        break
+
+    
+
+def turn_right_before_yaw():
+    while True:
+        motor_front_left.start(speed=-100)
+        motor_front_right.start(speed=-100)
+        motor_back_left.start(speed=-100)
+        motor_back_right.start(speed=-100)
+        current_yaw = hub.motion_sensor.get_yaw_angle()
+        current_color = color_sensor.get_color()
+        if current_yaw > 25 or current_color == 'green':
+            motor_front_left.stop()
+            motor_front_right.stop()
+            motor_back_left.stop()
+            motor_back_right.stop()
+            return
+
+
+
+def move_straight_and_left():
+    current_color = color_sensor.get_color()
+    while current_color != "black":
+        motor_front_left.start(speed=-30)
+        motor_front_right.start(speed=50)
+        motor_back_left.start(speed=-30)
+        motor_back_right.start(speed=50)
+        current_color = color_sensor.get_color()
+        while current_color != "black":
+            current_color = color_sensor.get_color()
+    while current_color == "black":
+        motor_front_left.stop()
+        motor_front_right.stop()
+        motor_back_left.stop()
+        motor_back_right.stop()
+        break
+
+
+def move_straight_and_right():
+    current_color = color_sensor.get_color()
+    while current_color != "black":
+        motor_front_left.start(speed=-50)
+        motor_front_right.start(speed=30)
+        motor_back_left.start(speed=-50)
+        motor_back_right.start(speed=30)
+        current_color = color_sensor.get_color()
+        while current_color != "black":
+            current_color = color_sensor.get_color()
+    while current_color == "black":
+        motor_front_left.stop()
+        motor_front_right.stop()
+        motor_back_left.stop()
+        motor_back_right.stop()
+        break
+
+
+
+def move_straight_for_seconds(seconds):
+    motor_front_left.start(speed=-100)
+    motor_front_right.start(speed=-100)
+    motor_back_left.start(speed=-100)
+    motor_back_right.start(speed=100)
+    wait_for_seconds(seconds)
+    motor_front_left.stop()
+    motor_front_right.stop()
+    motor_back_left.stop()
+    motor_back_right.stop()
+
+def move_back_for_seconds(seconds):
+    motor_front_left.start(speed=50)
+    motor_front_right.start(speed=-50)
+    motor_back_left.start(speed=50)
+    motor_back_right.start(speed=-50)
+    wait_for_seconds(seconds)
+    motor_front_left.stop()
+    motor_front_right.stop()
+    motor_back_left.stop()
+    motor_back_right.stop()
+
+
+def turn_left_for_seconds(seconds):
+    motor_front_left.start(speed=100)
+    motor_front_right.start(speed=100)
+    motor_back_left.start(speed=100)
+    motor_back_right.start(speed=100)
+    wait_for_seconds(seconds)
+    motor_front_left.stop()
+    motor_front_right.stop()
+    motor_back_left.stop()
+    motor_back_right.stop()
+
+
+def turn_right_for_seconds(seconds):
+    motor_front_left.start(speed=-80)
+    motor_front_right.start(speed=-80)
+    motor_back_left.start(speed=-80)
+    motor_back_right.start(speed=-80)
+    wait_for_seconds(seconds)
+    motor_front_left.stop()
+    motor_front_right.stop()
+    motor_back_left.stop()
+    motor_back_right.stop()
+#End Movement functions
+
+
+# Create your objects here.
+
+
+# Write your program here.
+hub.speaker.beep()
+# hub.speaker("Celebrate")
+        
+# WORKING VERSION
+
+
+# while True:
+
+#     move_straight_while_green()
+#     print("I Finished Mr. Pog.")
+#     current_color = color_sensor.get_color()
+#     # hub.speaker.play_sound("Celebrate")
+#     while current_color != 'green':
+#         hub.motion_sensor.reset_yaw_angle()
+#         # hub.speaker.play_sound("Celebrate")
+#         while hub.motion_sensor.get_yaw_angle() < 25 and color_sensor.get_color() != 'green':
+#             turn_right_for_seconds(0.20)
+#             wait_for_seconds(0.1)
+#             continue
+#         while hub.motion_sensor.get_yaw_angle() > -25 and color_sensor.get_color() != 'green':
+#             turn_left_while_black()
+#             # turn_left_for_seconds(0.25)
+#             wait_for_seconds(0.075)
+#         current_color = color_sensor.get_color()
+
+while True:
+   move_straight_while_green()
+   print("I Finished Mr. Pog.")
+   current_color = color_sensor.get_color()
+   while current_color != 'green':
+       hub.motion_sensor.reset_yaw_angle()
+       turn_right_before_yaw()
+       if color_sensor.get_color() != 'green':
+           turn_left_while_black()
+       current_color = color_sensor.get_color()
+
+hub.speaker.beep()
+hub.speaker.doom-eternal-soundtrack
