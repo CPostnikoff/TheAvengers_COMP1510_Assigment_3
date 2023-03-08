@@ -1,0 +1,140 @@
+from mindstorms import MSHub, Motor, MotorPair, ColorSensor, DistanceSensor, App
+from mindstorms.control import wait_for_seconds, wait_until, Timer
+from mindstorms.operator import greater_than, greater_than_or_equal_to, less_than, less_than_or_equal_to, equal_to, \
+    not_equal_to
+import math
+
+## Create your objects here.
+
+# initialize hub so we can use the hub.motion_sensor
+hub = MSHub()
+color_sensor = ColorSensor('E')
+distance_sensor = DistanceSensor('F')
+motor_front_left = Motor("A")
+motor_front_right = Motor("B")
+motor_back_left = Motor("C")
+motor_back_right = Motor("D")
+distance_sensor.light_up_all(100)
+## Write your program here.
+
+def move_straight_for_seconds(seconds):
+    motor_front_left.start(speed=-100)
+    motor_front_right.start(speed=100)
+    motor_back_left.start(speed=-100)
+    motor_back_right.start(speed=100)
+    wait_for_seconds(seconds)
+    motor_front_left.stop()
+    motor_front_right.stop()
+    motor_back_left.stop()
+    motor_back_right.stop()
+
+
+def move_back_for_seconds(seconds):
+    motor_front_left.start(speed=100)
+    motor_front_right.start(speed=-100)
+    motor_back_left.start(speed=100)
+    motor_back_right.start(speed=-100)
+    wait_for_seconds(seconds)
+    motor_front_left.stop()
+    motor_front_right.stop()
+    motor_back_left.stop()
+    motor_back_right.stop()
+
+
+def turn_left_for_seconds(seconds):
+    motor_front_left.start(speed=100)
+    motor_front_right.start(speed=100)
+    motor_back_left.start(speed=100)
+    motor_back_right.start(speed=100)
+    wait_for_seconds(seconds)
+    motor_front_left.stop()
+    motor_front_right.stop()
+    motor_back_left.stop()
+    motor_back_right.stop()
+
+
+def turn_right_for_seconds(seconds):
+    motor_front_left.start(speed=-100)
+    motor_front_right.start(speed=-100)
+    motor_back_left.start(speed=-100)
+    motor_back_right.start(speed=-100)
+    wait_for_seconds(seconds)
+    motor_front_left.stop()
+    motor_front_right.stop()
+    motor_back_left.stop()
+    motor_back_right.stop()
+
+def move_straight_while_green():
+    current_color = color_sensor.get_color()
+    while current_color != "black":
+        motor_front_left.start(speed=-100)
+        motor_front_right.start(speed=100)
+        motor_back_left.start(speed=-100)
+        motor_back_right.start(speed=100)
+        current_color = color_sensor.get_color()
+        while current_color != "black":
+            current_color = color_sensor.get_color()
+    while current_color == "black":
+        motor_front_left.stop()
+        motor_front_right.stop()
+        motor_back_left.stop()
+        motor_back_right.stop()
+        break
+
+def turn_180_or_detect():
+    hub.motion_sensor.get_yaw_angle()
+    while True:
+        motor_front_left.start(speed=-100)
+        motor_front_right.start(speed=-100)
+        motor_back_left.start(speed=-100)
+        motor_back_right.start(speed=-100)
+        current_yaw = hub.motion_sensor.get_yaw_angle()
+        current_color = color_sensor.get_color()
+        if distance_sensor.get_distance_cm() != None and distance_sensor.get_distance_cm() < 50:
+            motor_front_left.stop()
+            motor_front_right.stop()
+            motor_back_left.stop()
+            motor_back_right.stop()
+            return
+        if current_yaw > 160:
+            motor_front_left.stop()
+            motor_front_right.stop()
+            motor_back_left.stop()
+            motor_back_right.stop()
+            return
+
+def spin():
+    motor_front_left.start(speed=-100)
+    motor_front_right.start(speed=-100)
+    motor_back_left.start(speed=-100)
+    motor_back_right.start(speed=-100)
+
+def turn_until_detection_or_360():
+    print("pog")
+    stop_angle = hub.motion_sensor.get_yaw_angle()
+    motor_front_left.start(speed=-100)
+    motor_front_right.start(speed=-100)
+    motor_back_left.start(speed=-100)
+    motor_back_right.start(speed=-100)
+    current_turn = stop_angle + 180
+    is_close = math.isclose(current_turn, stop_angle, abs_tol = 5)
+    while not is_close:
+        distance_reading = distance_sensor.get_distance_cm()
+        current_turn = hub.motion_sensor.get_yaw_angle()
+        if distance_reading != None and distance_reading < 50:
+            break
+        if current_turn < stop_angle:
+            is_close = math.isclose(current_turn, 0, abs_tol = 5)
+    print("poggers")
+    motor_front_left.stop()
+    motor_front_right.stop()
+    motor_back_left.stop()
+    motor_back_right.stop()
+    if is_close == True:
+        turn_180_or_detect()
+
+
+while True:
+    move_straight_while_green()
+    move_back_for_seconds(0.5)
+    turn_until_detection_or_360()
