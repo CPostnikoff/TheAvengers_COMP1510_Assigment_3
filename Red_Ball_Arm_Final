@@ -1,0 +1,200 @@
+from mindstorms import MSHub, Motor, MotorPair, ColorSensor, DistanceSensor, App
+from mindstorms.control import wait_for_seconds, wait_until, Timer
+from mindstorms.operator import greater_than, greater_than_or_equal_to, less_than, less_than_or_equal_to, equal_to, not_equal_to
+import math
+
+## Create your objects here.
+
+# initialize hub so we can use the hub.motion_sensor
+hub = MSHub()
+color_sensor = ColorSensor('E')
+distance_sensor = DistanceSensor('F')
+motor_pair = MotorPair("C", "D")
+motor_left = Motor("C")
+motor_right = Motor("D")
+motor_arm = MotorPair("A", "B")
+distance_sensor.light_up_all(100)
+## Write your program here.
+
+movement_history = [0, 0]
+sum_x = 0
+sum_y = 0
+
+print(distance_sensor.get_distance_cm())
+
+# these are quakers movement commands, editied for 2 wheels
+def move_straight_for_seconds(seconds):
+    """
+    Move straight for a specified number of seconds, or until an object is detected, or a boundry is reached
+    """
+    timer = Timer()
+    motor_pair.start(0, 40)
+    current_color = color_sensor.get_color()
+    current_distance_scan = distance_sensor.get_distance_cm()
+
+    while current_color == "green" and timer.now() != seconds and not current_distance_scan:
+        current_color = color_sensor.get_color()
+        current_distance_scan = distance_sensor.get_distance_cm()
+        print(timer.now())
+
+    final_time = timer.now()
+
+    if current_color != "green":
+        print("color stop")
+        motor_pair.stop()
+        print(final_time)
+        # move_from_boundry(2)
+
+    if current_distance_scan:
+        print(final_time)
+        motor_pair.stop()
+        return final_time
+
+    if final_time == seconds:
+        print("timestop")
+        print(final_time)
+        motor_pair.stop()
+
+
+def move_from_boundry(seconds):
+    """
+    Move backwards then turn right
+    """
+    motor_pair.start(0, -40)
+    wait_for_seconds(seconds)
+    motor_pair.stop
+    turn_right_for_seconds(seconds)
+
+
+def move_back_for_seconds(seconds):
+    """
+    Move back for a specified number of seconds
+    """
+    motor_pair.start(0, -55)
+    timer = Timer()
+    while color_sensor.get_color() == "green" and timer.now() != seconds:
+        current_color = color_sensor.get_color()
+    motor_pair.stop()
+
+
+def turn_left_for_seconds(seconds):
+    """
+    Turn left for a specified number of seconds
+    """
+    motor_pair.start(-100, 40)
+    timer = Timer()
+    while color_sensor.get_color() == "green" and timer.now() != seconds:
+        current_color = color_sensor.get_color()
+    motor_pair.stop()
+
+
+def turn_right_for_seconds(seconds):
+    """
+    Turn right for a specified number of seconds
+    """
+    # global movement_history[3] += hub.motion_sensor.get_yaw_angle()
+    timer = Timer()
+    motor_pair.start(100, 20)
+    while color_sensor.get_color() == "green" and timer.now() != seconds:
+        current_color = color_sensor.get_color()
+    motor_pair.stop()
+
+# def turn_until_detection_or_360():
+#    print("pog")
+#    hub.motion_sensor.reset_yaw_angle()
+#    motor_pair.start(100, 10)
+#    current_turn = 180
+#    is_close = math.isclose(current_turn, 0, abs_tol = 5)
+#    while not is_close:
+#        print("pog")
+#        distance_reading = distance_sensor.get_distance_cm()
+#        current_turn = hub.motion_sensor.get_yaw_angle()
+#        if distance_reading != None and distance_reading < 50:
+#            break
+#        if current_turn < 0:
+#            is_close = math.isclose(current_turn, 0, abs_tol = 5)
+#    print("poggers")
+#    motor_pair.stop()
+
+def turn_until_detection_or_360():
+    """
+    Turn until the robot has approximately completed a 360, or detects an object
+    """
+    print("pog")
+    stop_angle = hub.motion_sensor.get_yaw_angle()
+    motor_pair.start(100, 10)
+    current_turn = stop_angle + 180
+    is_close = math.isclose(current_turn, stop_angle, abs_tol = 5)
+    while not is_close:
+        print("pog")
+        distance_reading = distance_sensor.get_distance_cm()
+        current_turn = hub.motion_sensor.get_yaw_angle()
+        if distance_reading != None and distance_reading < 50:
+            break
+        if current_turn < stop_angle:
+            is_close = math.isclose(current_turn, 0, abs_tol = 5)
+    print("poggers")
+    motor_pair.stop()
+    global current_angle
+    current_angle = hub.motion_sensor.get_yaw_angle()
+
+
+def check_for_red_ball():
+    """
+    Scan for a detected object, if an object is detected, move within range of the object
+    """
+    distance_reading = distance_sensor.get_distance_cm()
+    if distance_reading != None and distance_reading >= 5:
+        distance_to_move = distance_reading - 5
+        motor_pair.move(distance_to_move, "cm", 0, 10)
+    else:
+        return
+
+
+def catch_ball():
+    """
+    Move motor down to catch the ball
+    """
+    motor_arm.move(110, "degrees", 0, 30)
+
+
+# # Move in and out Program
+
+# This program just moves out, then backs up, rotates, and goes forward again
+# If it detects anything within 30cm, it will move to the object, pick it up, move to the edge and back up
+# current_distance = distance_sensor.get_distance_cm()
+# while current_distance == None or current_distance > 30:
+#    current_color = color_sensor.get_color()
+#    current_distance = distance_sensor.get_distance_cm()
+#    motor_pair.start(0, 50)
+#    while current_color == "green" and not current_distance:
+#        current_color = color_sensor.get_color()
+#        current_distance = distance_sensor.get_distance_cm()
+#    current_color = color_sensor.get_color()
+#    current_distance = distance_sensor.get_distance_cm()
+#    if current_distance != None:
+#        break
+#    motor_pair.move(35, "cm", 0, -100)
+#    motor_pair.move(10, "degrees", 100, 30)
+# motor_pair.stop()
+
+# check_for_red_ball()
+
+# catch_ball()
+
+# motor_pair.start(0, 40)
+# current_color = color_sensor.get_color()
+
+# while current_color == "green":
+#    current_color = color_sensor.get_color()
+
+# motor_pair.stop()
+# motor_pair.move(50, "cm", 0, -10)
+
+
+
+# Arm program
+motor_pair.start(100, 40)
+wait_for_seconds(3)
+motor_arm.move(90, "degrees", 0, -30)
+motor_pair.stop()
