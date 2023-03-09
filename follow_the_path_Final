@@ -59,7 +59,7 @@ def turn_left_while_black():
         motor_back_right.stop()
         break
 
-    
+
 
 def turn_right_before_yaw():
     while True:
@@ -169,39 +169,37 @@ def turn_right_for_seconds(seconds):
 # Write your program here.
 hub.speaker.beep()
 # hub.speaker("Celebrate")
-        
+
 # WORKING VERSION
 
 
 # while True:
 
-#     move_straight_while_green()
-#     print("I Finished Mr. Pog.")
-#     current_color = color_sensor.get_color()
-#     # hub.speaker.play_sound("Celebrate")
-#     while current_color != 'green':
-#         hub.motion_sensor.reset_yaw_angle()
-#         # hub.speaker.play_sound("Celebrate")
-#         while hub.motion_sensor.get_yaw_angle() < 25 and color_sensor.get_color() != 'green':
-#             turn_right_for_seconds(0.20)
-#             wait_for_seconds(0.1)
-#             continue
-#         while hub.motion_sensor.get_yaw_angle() > -25 and color_sensor.get_color() != 'green':
-#             turn_left_while_black()
-#             # turn_left_for_seconds(0.25)
-#             wait_for_seconds(0.075)
-#         current_color = color_sensor.get_color()
+#    move_straight_while_green()
+#    print("I Finished Mr. Pog.")
+#    current_color = color_sensor.get_color()
+#    # hub.speaker.play_sound("Celebrate")
+#    while current_color != 'green':
+#        hub.motion_sensor.reset_yaw_angle()
+#        # hub.speaker.play_sound("Celebrate")
+#        while hub.motion_sensor.get_yaw_angle() < 25 and color_sensor.get_color() != 'green':
+#            turn_right_for_seconds(0.20)
+#            wait_for_seconds(0.1)
+#            continue
+#        while hub.motion_sensor.get_yaw_angle() > -25 and color_sensor.get_color() != 'green':
+#            turn_left_while_black()
+#            # turn_left_for_seconds(0.25)
+#            wait_for_seconds(0.075)
+#        current_color = color_sensor.get_color()
 
 while True:
-   move_straight_while_green()
-   print("I Finished Mr. Pog.")
-   current_color = color_sensor.get_color()
-   while current_color != 'green':
-       hub.motion_sensor.reset_yaw_angle()
-       turn_right_before_yaw()
-       if color_sensor.get_color() != 'green':
-           turn_left_while_black()
-       current_color = color_sensor.get_color()
+    move_straight_while_green()
+    print("I Finished Mr. Pog.")
+    current_color = color_sensor.get_color()
+    while current_color != 'green':
+        hub.motion_sensor.reset_yaw_angle()
+        turn_right_before_yaw()
+        if color_sensor.get_color() != 'green':
+            turn_left_while_black()
+        current_color = color_sensor.get_color()
 
-hub.speaker.beep()
-hub.speaker.doom-eternal-soundtrack
