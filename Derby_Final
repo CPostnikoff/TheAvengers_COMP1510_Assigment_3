@@ -18,6 +18,9 @@ distance_sensor.light_up_all(100)
 ## Write your program here.
 
 def move_straight_for_seconds(seconds):
+    """
+    Move straight for a given number of seconds
+    """
     motor_front_left.start(speed=-100)
     motor_front_right.start(speed=100)
     motor_back_left.start(speed=-100)
@@ -30,6 +33,9 @@ def move_straight_for_seconds(seconds):
 
 
 def move_back_for_seconds(seconds):
+    """
+    Move backwards for a given number of seconds
+    """
     motor_front_left.start(speed=100)
     motor_front_right.start(speed=-100)
     motor_back_left.start(speed=100)
@@ -42,6 +48,9 @@ def move_back_for_seconds(seconds):
 
 
 def turn_left_for_seconds(seconds):
+    """
+    Turn left for a given number of seconds
+    """
     motor_front_left.start(speed=100)
     motor_front_right.start(speed=100)
     motor_back_left.start(speed=100)
@@ -54,6 +63,9 @@ def turn_left_for_seconds(seconds):
 
 
 def turn_right_for_seconds(seconds):
+    """
+    Turn right for a given number of seconds
+    """
     motor_front_left.start(speed=-100)
     motor_front_right.start(speed=-100)
     motor_back_left.start(speed=-100)
@@ -65,6 +77,9 @@ def turn_right_for_seconds(seconds):
     motor_back_right.stop()
 
 def move_straight_while_green():
+    """
+    Move straight until colour sensor detects black
+    """
     current_color = color_sensor.get_color()
     while current_color != "black":
         motor_front_left.start(speed=-100)
@@ -82,6 +97,9 @@ def move_straight_while_green():
         break
 
 def turn_180_or_detect():
+    """
+    Turn until a turn of approximately 180 degrees is completed or an object is detected
+    """
     hub.motion_sensor.get_yaw_angle()
     while True:
         motor_front_left.start(speed=-100)
@@ -104,12 +122,18 @@ def turn_180_or_detect():
             return
 
 def spin():
+    """
+    Spin in place
+    """
     motor_front_left.start(speed=-100)
     motor_front_right.start(speed=-100)
     motor_back_left.start(speed=-100)
     motor_back_right.start(speed=-100)
 
 def turn_until_detection_or_360():
+    """
+    Turn until a turn of approximately 360 degrees is completed or an object is detected
+    """
     print("pog")
     stop_angle = hub.motion_sensor.get_yaw_angle()
     motor_front_left.start(speed=-100)
