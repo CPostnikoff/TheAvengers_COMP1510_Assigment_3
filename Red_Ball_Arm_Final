@@ -7,8 +7,8 @@ import math
 
 # initialize hub so we can use the hub.motion_sensor
 hub = MSHub()
-color_sensor = ColorSensor('E')
-distance_sensor = DistanceSensor('F')
+color_sensor = ColorSensor("F")
+distance_sensor = DistanceSensor('E')
 motor_pair = MotorPair("C", "D")
 motor_left = Motor("C")
 motor_right = Motor("D")
