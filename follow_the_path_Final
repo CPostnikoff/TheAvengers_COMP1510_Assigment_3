@@ -13,7 +13,7 @@ motor_front_left = Motor("A")
 motor_front_right = Motor("B")
 motor_back_left = Motor("C")
 motor_back_right = Motor("D")
-color_sensor = ColorSensor("E")
+color_sensor = ColorSensor("F")
 # distance_sensor.light_up_all(100)
 ## Write your program here.
 
@@ -52,7 +52,7 @@ def turn_left_while_black():
         while current_color != "green":
             current_color = color_sensor.get_color()
     while current_color == "green":
-        wait_for_seconds(0.16)
+        wait_for_seconds(0.075)
         motor_front_left.stop()
         motor_front_right.stop()
         motor_back_left.stop()
@@ -60,106 +60,37 @@ def turn_left_while_black():
         break
 
 
+# def turn_right_before_yaw():
+#     while True:
+#         motor_front_left.start(speed=-100)
+#         motor_front_right.start(speed=-90)
+#         motor_back_left.start(speed=-100)
+#         motor_back_right.start(speed=-90)
+#         current_yaw = hub.motion_sensor.get_yaw_angle()
+#         current_color = color_sensor.get_color()
+#         if current_yaw > 50 or current_color == 'green':
+#             motor_front_left.stop()
+#             motor_front_right.stop()
+#             motor_back_left.stop()
+#             motor_back_right.stop()
+#             return
+
 
 def turn_right_before_yaw():
     while True:
-        motor_front_left.start(speed=-100)
-        motor_front_right.start(speed=-100)
-        motor_back_left.start(speed=-100)
-        motor_back_right.start(speed=-100)
+        motor_front_left.start(speed=-50)
+        motor_front_right.start(speed=-45)
+        motor_back_left.start(speed=-50)
+        motor_back_right.start(speed=-45)
         current_yaw = hub.motion_sensor.get_yaw_angle()
         current_color = color_sensor.get_color()
-        if current_yaw > 25 or current_color == 'green':
+        if current_yaw > 50 or current_color == 'green':
             motor_front_left.stop()
             motor_front_right.stop()
             motor_back_left.stop()
             motor_back_right.stop()
             return
 
-
-
-def move_straight_and_left():
-    current_color = color_sensor.get_color()
-    while current_color != "black":
-        motor_front_left.start(speed=-30)
-        motor_front_right.start(speed=50)
-        motor_back_left.start(speed=-30)
-        motor_back_right.start(speed=50)
-        current_color = color_sensor.get_color()
-        while current_color != "black":
-            current_color = color_sensor.get_color()
-    while current_color == "black":
-        motor_front_left.stop()
-        motor_front_right.stop()
-        motor_back_left.stop()
-        motor_back_right.stop()
-        break
-
-
-def move_straight_and_right():
-    current_color = color_sensor.get_color()
-    while current_color != "black":
-        motor_front_left.start(speed=-50)
-        motor_front_right.start(speed=30)
-        motor_back_left.start(speed=-50)
-        motor_back_right.start(speed=30)
-        current_color = color_sensor.get_color()
-        while current_color != "black":
-            current_color = color_sensor.get_color()
-    while current_color == "black":
-        motor_front_left.stop()
-        motor_front_right.stop()
-        motor_back_left.stop()
-        motor_back_right.stop()
-        break
-
-
-
-def move_straight_for_seconds(seconds):
-    motor_front_left.start(speed=-100)
-    motor_front_right.start(speed=-100)
-    motor_back_left.start(speed=-100)
-    motor_back_right.start(speed=100)
-    wait_for_seconds(seconds)
-    motor_front_left.stop()
-    motor_front_right.stop()
-    motor_back_left.stop()
-    motor_back_right.stop()
-
-def move_back_for_seconds(seconds):
-    motor_front_left.start(speed=50)
-    motor_front_right.start(speed=-50)
-    motor_back_left.start(speed=50)
-    motor_back_right.start(speed=-50)
-    wait_for_seconds(seconds)
-    motor_front_left.stop()
-    motor_front_right.stop()
-    motor_back_left.stop()
-    motor_back_right.stop()
-
-
-def turn_left_for_seconds(seconds):
-    motor_front_left.start(speed=100)
-    motor_front_right.start(speed=100)
-    motor_back_left.start(speed=100)
-    motor_back_right.start(speed=100)
-    wait_for_seconds(seconds)
-    motor_front_left.stop()
-    motor_front_right.stop()
-    motor_back_left.stop()
-    motor_back_right.stop()
-
-
-def turn_right_for_seconds(seconds):
-    motor_front_left.start(speed=-80)
-    motor_front_right.start(speed=-80)
-    motor_back_left.start(speed=-80)
-    motor_back_right.start(speed=-80)
-    wait_for_seconds(seconds)
-    motor_front_left.stop()
-    motor_front_right.stop()
-    motor_back_left.stop()
-    motor_back_right.stop()
 #End Movement functions
 
 
@@ -194,7 +125,6 @@ hub.speaker.beep()
 
 while True:
     move_straight_while_green()
-    print("I Finished Mr. Pog.")
     current_color = color_sensor.get_color()
     while current_color != 'green':
         hub.motion_sensor.reset_yaw_angle()
@@ -202,4 +132,3 @@ while True:
         if color_sensor.get_color() != 'green':
             turn_left_while_black()
         current_color = color_sensor.get_color()
-
